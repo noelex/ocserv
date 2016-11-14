@@ -30,8 +30,10 @@ ocserv-args.c: $(srcdir)/ocserv-args.def $(builddir)/version.inc
 		cp $(srcdir)/autogen/ocserv-args.h $(builddir)/; \
 	else \
 		$(AUTOGEN) $<; \
-		cp $(builddir)/ocserv-args.c $(srcdir)/autogen; \
-		cp $(builddir)/ocserv-args.h $(srcdir)/autogen; \
+		if test -d $(srcdir)/autogen;then \
+			cp $(builddir)/ocserv-args.c $(srcdir)/autogen; \
+			cp $(builddir)/ocserv-args.h $(srcdir)/autogen; \
+		fi; \
 	fi
 ocserv-args.h: ocserv-args.c
 

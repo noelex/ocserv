@@ -28,8 +28,10 @@ args.c: $(srcdir)/args.def $(builddir)/../version.inc
 		cp $(srcdir)/../autogen/ocpasswd-args.h $(builddir)/args.h; \
 	else \
 		$(AUTOGEN) $<; \
-		cp $(builddir)/args.c $(srcdir)/../autogen/ocpasswd-args.c; \
-		cp $(builddir)/args.h $(srcdir)/../autogen/ocpasswd-args.h; \
+		if test -d $(srcdir)/autogen;then \
+			cp $(builddir)/args.c $(srcdir)/../autogen/ocpasswd-args.c; \
+			cp $(builddir)/args.h $(srcdir)/../autogen/ocpasswd-args.h; \
+		fi; \
 	fi
 args.h: args.c
 
