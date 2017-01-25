@@ -665,7 +665,7 @@ void cookie_list(struct unix_ctx *ctx, SecmListCookiesReplyMsg *rep, FILE *out, 
 
 
 		fprintf(out, "%.6s %8s %8s %14s %.24s %8s %8s\n",
-			cookie_to_str(rep->cookies[i]->sid.data, rep->cookies[i]->sid.len, 1),
+			cookie_to_str(rep->cookies[i]->safe_id.data, rep->cookies[i]->safe_id.len, 1),
 			username, groupname, rep->cookies[i]->remote_ip,
 			rep->cookies[i]->user_agent, tmpbuf, ps_status_to_str(rep->cookies[i]->status, 1));
 	}
@@ -1030,8 +1030,8 @@ int common_info_cmd(UserListRep * args, FILE *out, cmd_params_st *params)
 		print_single_value_ex(out, params, "Connected at", str_since, tmpbuf, 1);
 
 		if (HAVE_JSON(params))
-			print_single_value(out, params, "Raw cookie", cookie_to_str(args->user[i]->sid.data, args->user[i]->sid.len, 0), 1);
-		print_single_value(out, params, "Cookie", cookie_to_str(args->user[i]->sid.data, args->user[i]->sid.len, 1), 1);
+			print_single_value(out, params, "Masked cookie", cookie_to_str(args->user[i]->safe_id.data, args->user[i]->safe_id.len, 0), 1);
+		print_single_value(out, params, "Cookie", cookie_to_str(args->user[i]->safe_id.data, args->user[i]->safe_id.len, 1), 1);
 
 		print_single_value(out, params, "TLS ciphersuite", args->user[i]->tls_ciphersuite, 1);
 		print_single_value(out, params, "DTLS cipher", args->user[i]->dtls_ciphersuite, 1);
@@ -1148,8 +1148,8 @@ int cookie_info_cmd(SecmListCookiesReplyMsg * args, FILE *out, cmd_params_st *pa
 
 		print_single_value(out, params, "Last Modified", str_since, 1);
 
-		print_single_value(out, params, "Raw cookie", cookie_to_str(args->cookies[i]->sid.data, args->cookies[i]->sid.len, 0), 1);
-		print_single_value(out, params, "Cookie", cookie_to_str(args->cookies[i]->sid.data, args->cookies[i]->sid.len, 1), 1);
+		print_single_value(out, params, "Masked cookie", cookie_to_str(args->cookies[i]->safe_id.data, args->cookies[i]->safe_id.len, 0), 1);
+		print_single_value(out, params, "Cookie", cookie_to_str(args->cookies[i]->safe_id.data, args->cookies[i]->safe_id.len, 1), 1);
 
 		print_end_block(out, params, i<(args->n_cookies-1)?1:0);
 
