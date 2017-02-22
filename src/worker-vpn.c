@@ -1487,7 +1487,7 @@ static void set_socket_timeout(worker_st * ws, int fd)
 
 #define IP_HEADER_SIZE 20
 #define IPV6_HEADER_SIZE 40
-#define TCP_HEADER_SIZE 8
+#define TCP_HEADER_SIZE 20
 #define UDP_HEADER_SIZE 8
 
 /* wild but conservative guess; this ciphersuite has the largest overhead */
@@ -1698,7 +1698,7 @@ static int connect_handler(worker_st * ws)
 			oclog(ws, LOG_INFO, "error in getting TCP_MAXSEG: %s",
 			      strerror(e));
 		} else {
-			max -= 13;
+			max += TCP_HEADER_SIZE + ((ws->proto == AF_INET)?(IP_HEADER_SIZE):(IPV6_HEADER_SIZE));
 			if (max > 0 && max < ws->vinfo.mtu) {
 				oclog(ws, LOG_INFO,
 				      "reducing MTU due to TCP MSS to %u (from %u)", max, ws->vinfo.mtu);
