@@ -222,19 +222,50 @@ int handle_status_cmd(struct unix_ctx *ctx, const char *arg, cmd_params_st *para
 
 	print_single_value(stdout, params, "Status", rep->status != 0 ? "online" : "error", 1);
 
-	t = rep->start_time;
-	tm = localtime(&t);
-	print_time_ival7(buf, time(0), t);
-	strftime(str_since, sizeof(str_since), DATE_TIME_FMT, tm);
+	if (rep->status) {
+		print_single_value_int(stdout, params, "Server PID", rep->pid, 1);
+		print_single_value_int(stdout, params, "Sec-mod PID", rep->sec_mod_pid, 0);
 
-	print_single_value_ex(stdout, params, "Up since", str_since, buf, 1);
-	print_single_value_int(stdout, params, "Clients", rep->active_clients, 1);
-	print_single_value_int(stdout, params, "Sec-mod client entries", rep->secmod_client_entries, 1);
-	print_single_value_int(stdout, params, "IPs in ban list", rep->banned_ips, 1);
-	print_single_value_int(stdout, params, "TLS DB entries", rep->stored_tls_sessions, 1);
-	print_separator(stdout, params);
-	print_single_value_int(stdout, params, "Server PID", rep->pid, 1);
-	print_single_value_int(stdout, params, "Sec-mod PID", rep->sec_mod_pid, 0);
+		print_separator(stdout, params);
+
+		t = rep->start_time;
+		tm = localtime(&t);
+		print_time_ival7(buf, time(0), t);
+		strftime(str_since, sizeof(str_since), DATE_TIME_FMT, tm);
+
+		print_single_value_ex(stdout, params, "Up since", str_since, buf, 1);
+		print_single_value_int(stdout, params, "Clients", rep->active_clients, 1);
+		print_single_value_int(stdout, params, "Sec-mod client entries", rep->secmod_client_entries, 1);
+		print_single_value_int(stdout, params, "IPs in ban list", rep->banned_ips, 1);
+		print_single_value_int(stdout, params, "TLS DB entries", rep->stored_tls_sessions, 1);
+
+		print_single_value_int(stdout, params, "Handled (closed) sessions", rep->sessions_closed, 1);
+		print_single_value_int(stdout, params, "Timed out sessions", rep->session_timeouts, 1);
+		print_single_value_int(stdout, params, "Timed out (idle) sessions", rep->session_idle_timeouts, 1);
+		print_single_value_int(stdout, params, "Closed due to error sessions", rep->session_errors, 1);
+
+		bytes2human(rep->kbytes_in*1000, buf, sizeof(buf), "");
+		print_single_value(stdout, params, "RX", buf, 1);
+		bytes2human(rep->kbytes_out*1000, buf, sizeof(buf), "");
+		print_single_value(stdout, params, "TX", buf, 1);
+
+		print_time_ival7(buf, rep->avg_auth_time, 0);
+		print_single_value(stdout, params, "Average auth time", buf, 1);
+
+		print_time_ival7(buf, rep->avg_session_mins*60, 0);
+		print_single_value(stdout, params, "Average session time", buf, 1);
+
+		t = rep->last_reset;
+		if (t > 0) {
+			tm = localtime(&t);
+			print_time_ival7(buf, time(0), t);
+			strftime(str_since, sizeof(str_since), DATE_TIME_FMT, tm);
+
+			print_single_value_ex(stdout, params, "Last stats reset", str_since, buf, 1);
+		}
+
+	}
+
 	print_end_block(stdout, params, 0);
 
 	status_rep__free_unpacked(rep, &pa);
