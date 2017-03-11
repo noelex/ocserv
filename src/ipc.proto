@@ -135,10 +135,6 @@ message cli_stats_msg
 	optional string ipv4 = 6;
 	optional string ipv6 = 7;
 	optional uint32 discon_reason = 8;
-	optional uint32 secmod_client_entries = 9; /* from sec-mod to main only */
-	optional uint32 secmod_tlsdb_entries = 10; /* from sec-mod to main only */
-	optional uint64 secmod_auth_failures = 11; /* failures since last update - sec-mod to main only */
-	optional uint32 secmod_avg_auth_time = 12; /* average auth time in seconds - sec-mod to main only */
 }
 
 /* UDP_FD */
@@ -269,6 +265,15 @@ message secm_session_close_msg
 	optional uint64 bytes_out = 5;
 	optional string ipv4 = 6;
 	optional string ipv6 = 7;
+}
+
+/* SECM_STATS */
+message secm_stats_msg
+{
+	required uint32 secmod_client_entries = 1; /* from sec-mod to main only */
+	required uint32 secmod_tlsdb_entries = 2; /* from sec-mod to main only */
+	required uint64 secmod_auth_failures = 3; /* failures since last update - sec-mod to main only */
+	required uint32 secmod_avg_auth_time = 4; /* average auth time in seconds - sec-mod to main only */
 }
 
 /* SECM_SESSION_REPLY */
