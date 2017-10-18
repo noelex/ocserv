@@ -952,7 +952,10 @@ int get_pmtu_approx(worker_st *ws)
 	socklen_t sl;
 	int ret, e;
 
-#if defined(__linux__) && defined(TCP_INFO)
+    // Stop using PMTU since some broken routers send ICMP message back without translating the original destination
+    // address. If the client sends its link MTU rather than PMTU and it detects tunnel MTU via DPD later, this will
+    // cause a tunnel MTU larger than the client on the server.
+#if 0 /*defined(__linux__) && defined(TCP_INFO)*/
 	struct tcp_info ti;
 	sl = sizeof(ti);
 
@@ -1074,6 +1077,8 @@ int periodic_check(worker_st * ws, struct timespec *tnow, unsigned dpd)
 		}
 	}
 
+    // Don't need to detect PMTU in real time since we are using TCP_MAXSEG.
+#if 0
 	if (ws->conn_type != SOCK_TYPE_UNIX && ws->udp_state != UP_DISABLED) {
 		max = get_pmtu_approx(ws);
 		if (max > 0 && max < ws->link_mtu) {
@@ -1082,6 +1087,7 @@ int periodic_check(worker_st * ws, struct timespec *tnow, unsigned dpd)
 			link_mtu_set(ws, max);
 		}
 	}
+#endif
 
  cleanup:
 	ws->last_periodic_check = now;
